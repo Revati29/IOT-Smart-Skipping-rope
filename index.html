@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Smart Skipping Rope</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .modal {
+            
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #888;
+            max-width: 300px;
+            text-align: center;
+            border-radius: 10px;
+            
+        }
+
+        .okay-button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .session {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .previous-sessions ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .previous-sessions li {
+            margin-bottom: 10px;
+        }
+
+        .set-goals form {
+            margin-top: 20px;
+        }
+
+        .set-goals label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .set-goals input[type="number"] {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Smart Skipping Rope</h1>
+
+        <div class="session">
+            <h2>Current Session</h2>
+            <p class="current-session-data"><strong>Jump Count:</strong> {{ current_session_data.jump_count }}</p>
+            <p class="current-session-data"><strong>Set Count:</strong> {{ current_session_data.set_count }}</p>
+            <p class="current-session-data"><strong>Set Duration:</strong> {{ current_session_data.set_duration }} milliseconds</p>
+        </div>
+
+        <div class="previous-sessions">
+            <h2>Previous Session</h2>
+            {% if previous_session %}
+            <ul>
+                <li>Jump Count: {{ previous_session[1] }}, Set Count: {{ previous_session[2] }}, Set Duration: {{ previous_session[3] }} milliseconds</li>
+            </ul>
+            {% else %}
+            <p>No previous session data available.</p>
+            {% endif %}
+        </div>
+        
+
+        <div class="set-goals">
+            <h2>Set Goals</h2>
+            <form method="POST" action="/set_goals" id="setGoalsForm">
+                <label for="jump_goal">Your Jump Goal:</label>
+                <input type="number" name="jump_goal" id="jump_goal" required><br>
+
+                <label for="set_goal">Your Set Goal:</label>
+                <input type="number" name="set_goal" id="set_goal" required><br>
+
+                <input type="submit" value="Set Goals" id="setGoalsBtn">
+            </form>
+        </div>
+    </div>
+
+   
+
+    <!-- JavaScript for handling the pop-up modal -->
+    <script>
+        function showGoalsPopup(event) {
+            event.preventDefault(); // Prevent form submission
+
+            var jumpGoal = document.getElementById('jump_goal').value;
+            var setGoal = document.getElementById('set_goal').value;
+
+            // Check if the "Set Goals" button is clicked and goals are set
+            if (jumpGoal !== "" && setGoal !== "") {
+                var modal = document.getElementById('goalsModal');
+                modal.style.display = 'flex';
+            }
+        }
+
+        function hideGoalsPopup() {
+            var modal = document.getElementById('goalsModal');
+            modal.style.display = 'none';
+        }
+
+        var setGoalsForm = document.getElementById('setGoalsForm');
+        setGoalsForm.addEventListener('submit', showGoalsPopup);
+    </script>
+  <script>
+    // Function to reload the page
+    function autoRefresh() {
+        location.reload();
+    }
+
+    // Set the refresh interval (in milliseconds)
+    var refreshInterval = 5000; // 5000 ms = 5 seconds
+
+    // Call the autoRefresh function every refreshInterval
+    setInterval(autoRefresh, refreshInterval);
+</script>
+
+    <!-- Pop-up Modal -->
+    <div class="modal" id="goalsModal">
+        <div class="modal-content">
+            <h2>Your goals are set. All the best!</h2>
+            <button class="okay-button" onclick="hideGoalsPopup()">Okay</button>
+    </div>
+</div>
+</body>
+</html>
